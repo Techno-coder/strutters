@@ -3,7 +3,7 @@ use core::ops::Deref;
 #[derive(Debug)]
 pub enum OwningRef<'a, T: 'a> {
 	Reference(&'a T),
-	Object(T)
+	Object(T),
 }
 
 impl<'a, T> Deref for OwningRef<'a, T> {

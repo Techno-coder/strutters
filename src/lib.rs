@@ -10,11 +10,9 @@ extern crate std;
 
 #[cfg(not(feature = "std"))]
 use collections::Vec;
-
+pub use self::owning_ref::OwningRef;
 #[cfg(feature = "std")]
 use std::vec::Vec;
-
-pub use self::owning_ref::OwningRef;
 
 pub mod tree;
 pub mod owning_ref;

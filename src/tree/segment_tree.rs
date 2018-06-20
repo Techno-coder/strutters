@@ -1,8 +1,8 @@
 use OwningRef;
 use super::AssociativeOperator;
 use super::BackingTree;
+use super::FixedDataSource;
 use super::ImplicitTree;
-use Vec;
 
 pub struct SegmentTree<T, B, O> where B: BackingTree<T> {
 	tree: B,
@@ -12,10 +12,10 @@ pub struct SegmentTree<T, B, O> where B: BackingTree<T> {
 }
 
 impl<T, B, O> SegmentTree<T, B, O> where O: AssociativeOperator<T>, B: BackingTree<T> {
-	fn construct_recursively(values: &mut Vec<T>, operator: &mut O, tree: &mut ImplicitTree<T>,
+	fn construct_recursively(values: &mut impl FixedDataSource<T>, operator: &mut O, tree: &mut ImplicitTree<T>,
 	                         range_left: usize, range_right: usize, node: usize) {
 		if range_right == range_left {
-			unsafe { tree.insert_unchecked(node, values.pop().unwrap()) };
+			unsafe { tree.insert_unchecked(node, values.next_back().unwrap()) };
 			return;
 		}
 
@@ -43,7 +43,7 @@ impl<T, B, O> SegmentTree<T, B, O> where O: AssociativeOperator<T>, B: BackingTr
 	fn query_recursively(&self, node: B::Identifier, left: usize, right: usize,
 	                     current_left: usize, current_right: usize) -> Option<OwningRef<T>> {
 		let in_range = left <= current_left && current_right <= right;
-		if in_range { return self.tree.get(&node).and_then(|reference| Some(reference.into())) }
+		if in_range { return self.tree.get(&node).and_then(|reference| Some(reference.into())); }
 
 		let (middle_left, middle_right) = super::functions::split_range(current_left, current_right);
 		let mut left_value = None;
@@ -109,7 +109,7 @@ impl<T, B, O> SegmentTree<T, B, O> where O: AssociativeOperator<T>, B: BackingTr
 }
 
 impl<T, O> SegmentTree<T, ImplicitTree<T>, O> where O: AssociativeOperator<T> {
-	pub fn construct_implicit(mut values: Vec<T>, mut operator: O) -> SegmentTree<T, ImplicitTree<T>, O> {
+	pub fn construct_implicit(mut values: impl FixedDataSource<T>, mut operator: O) -> SegmentTree<T, ImplicitTree<T>, O> {
 		let mut tree = ImplicitTree::new(super::BINARY_WIDTH);
 		let root = tree.root();
 		let length = values.len();
@@ -137,7 +137,7 @@ mod tests {
 	fn test_summation() {
 		use core::ops::Deref;
 		let data = vec![1, 2, 3, 4, 5, 6, 7];
-		let mut tree = SegmentTree::construct_implicit(data, ::tree::summation());
+		let mut tree = SegmentTree::construct_implicit(data.into_iter(), ::tree::summation());
 		assert_eq!(*tree.query(0, 3).deref(), 1 + 2 + 3 + 4);
 		assert_eq!(*tree.query(0, 6).deref(), 1 + 2 + 3 + 4 + 5 + 6 + 7);
 		assert_eq!(*tree.query(4, 6).deref(), 5 + 6 + 7);
@@ -147,5 +147,21 @@ mod tests {
 		assert_eq!(*tree.query(6, 6).deref(), 10);
 		assert_eq!(*tree.query(4, 6).deref(), 5 + 6 + 10);
 		assert_eq!(*tree.query(0, 6).deref(), 1 + 2 + 3 + 4 + 5 + 6 + 10);
+	}
+
+	#[test]
+	fn test_minimum() {
+		use core::ops::Deref;
+		let data = vec![1, 2, 3, 4, 5, 6, 7];
+		let mut tree = SegmentTree::construct_implicit(data.into_iter(), ::tree::minimum());
+		assert_eq!(*tree.query(0, 3).deref(), 1);
+		assert_eq!(*tree.query(0, 6).deref(), 1);
+		assert_eq!(*tree.query(4, 6).deref(), 5);
+		assert_eq!(*tree.query(0, 0).deref(), 1);
+		assert_eq!(*tree.query(2, 3).deref(), 3);
+		tree.update(6, 10);
+		assert_eq!(*tree.query(6, 6).deref(), 10);
+		assert_eq!(*tree.query(4, 6).deref(), 5);
+		assert_eq!(*tree.query(0, 6).deref(), 1);
 	}
 }

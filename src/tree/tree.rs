@@ -26,19 +26,3 @@ pub trait BackingTree<T> {
 	/// Returns `None` if `node` does not exist
 	fn insert_child(&mut self, node: Self::Identifier, offset: usize, value: T) -> Option<Self::Identifier>;
 }
-
-// TODO
-//pub struct Node<'a, T: 'a, I: 'a> {
-//	tree: &'a mut Tree<T, I>,
-//	identifier: I,
-//}
-//
-//impl<'a, T, I> Node<'a, T, I> {
-//	pub fn parent(self) -> Node<'a, T, I> {
-//		self.tree.parent(self.identifier)
-//	}
-//
-//	pub fn child(self) -> Node<'a, T, I> {
-//		self.tree.parent(self.identifier)
-//	}
-//}
