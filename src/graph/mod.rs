@@ -8,6 +8,6 @@ pub use self::graph::Graph;
 pub mod graph;
 pub mod edge;
 pub mod adjacency_list;
-pub mod dijkstra;
 pub mod generic_edge;
 pub mod numerical_weight;
+pub mod shortest_path;

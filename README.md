@@ -18,6 +18,6 @@ Rust library for data structures [WIP]
 		- Dijkstra
 
 ## Specific details
-For `Segment tree` (and its variants) a closure needs to be implemented that implements `AssociativeOperator`. This closure produces the parent node of its child nodes. Some example associative operators are included in `tree/mod.rs`.
+For segment trees, a closure needs to be implemented that implements `AssociativeOperator`. This closure produces the parent node of its child nodes. Some example associative operators are included in `tree/mod.rs`.
 
 For the lazy propagation segment tree, a closure needs to be implemented that implements `DeltaSifter`. This closure produces the correct node value from its current value and its current delta value. Additionally, the node will be updated from its child nodes once this is executed.

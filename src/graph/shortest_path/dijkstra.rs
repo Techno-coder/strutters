@@ -1,9 +1,10 @@
 use collections::BinaryHeap;
 use collections::BTreeMap;
 use core::cmp::Ordering;
-use super::Graph;
-use super::Weight;
-use super::WeightedEdge;
+use graph::Edge;
+use graph::Graph;
+use graph::Weight;
+use graph::WeightedEdge;
 
 pub struct Dijkstra<'a, E> where E: 'a + WeightedEdge {
 	distances: BTreeMap<&'a E::Node, E::Weight>,
@@ -18,8 +19,12 @@ impl<'a, E> Dijkstra<'a, E> where E: WeightedEdge, E::Node: Ord {
 		}
 	}
 
-	pub fn distance_to(&self, node: &E::Node) -> Option<&E::Weight> {
+	pub fn distance(&self, node: &E::Node) -> Option<&E::Weight> {
 		self.distances.get(node)
+	}
+
+	pub fn parent(&self, node: &E::Node) -> Option<&E::Node> {
+		self.parents.get(node).cloned()
 	}
 }
 
@@ -58,8 +63,8 @@ impl<'a, E> Ord for DijkstraElement<'a, E> where E: WeightedEdge {
 	}
 }
 
-pub fn dijkstra<'g, E>(graph: &'g Graph<Node=E::Node, Edge=E>, start: &'g E::Node, start_weight: E::Weight)
-                       -> Dijkstra<'g, E> where E: WeightedEdge, E::Node: Ord {
+pub fn dijkstra<'g, G, E>(graph: &'g G, start: &'g E::Node, start_weight: E::Weight)
+                          -> Dijkstra<'g, E> where G: Graph<'g, Edge=E>, E: WeightedEdge, E::Node: Ord {
 	let mut store = Dijkstra::new();
 	let mut queue: BinaryHeap<DijkstraElement<E>> = BinaryHeap::new();
 
@@ -74,22 +79,24 @@ pub fn dijkstra<'g, E>(graph: &'g Graph<Node=E::Node, Edge=E>, start: &'g E::Nod
 			if &next.weight > current_weight { continue; }
 		}
 
-		for neighbour in graph.neighbours(next.node).or(Some(&[])).unwrap() {
-			let new_weight = E::Weight::combine(&neighbour.weight(), &next.weight);
-			if let Some(current_weight) = store.distances.get(next.node) {
-				if &new_weight < current_weight {
+		if let Some(neighbours) = graph.neighbours(next.node) {
+			for neighbour in neighbours {
+				let new_weight = E::Weight::combine(&neighbour.weight(), &next.weight);
+				if let Some(current_weight) = store.distances.get(next.node) {
+					if &new_weight < current_weight {
+						queue.push(DijkstraElement {
+							parent: Some(next.node),
+							node: neighbour.end_node(),
+							weight: new_weight,
+						});
+					}
+				} else {
 					queue.push(DijkstraElement {
 						parent: Some(next.node),
 						node: neighbour.end_node(),
 						weight: new_weight,
 					});
 				}
-			} else {
-				queue.push(DijkstraElement {
-					parent: Some(next.node),
-					node: neighbour.end_node(),
-					weight: new_weight,
-				});
 			}
 		}
 
@@ -117,9 +124,9 @@ mod tests {
 		graph.add_edge('a', GenericEdge::new('c', 5));
 
 		let store = dijkstra(&graph, &'a', 0);
-		assert_eq!(store.distance_to(&'a').unwrap(), &0);
-		assert_eq!(store.distance_to(&'b').unwrap(), &1);
-		assert_eq!(store.distance_to(&'c').unwrap(), &2);
-		assert_eq!(store.distance_to(&'d').unwrap(), &4);
+		assert_eq!(store.distance(&'a').unwrap(), &0);
+		assert_eq!(store.distance(&'b').unwrap(), &1);
+		assert_eq!(store.distance(&'c').unwrap(), &2);
+		assert_eq!(store.distance(&'d').unwrap(), &4);
 	}
 }
