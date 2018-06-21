@@ -9,7 +9,7 @@ use super::DeltaWrapper;
 use super::FixedDataSource;
 use super::ImplicitTree;
 
-pub struct LazySegmentTree<T, B, O, S, D> where B: BackingTree<DeltaWrapper<T, D>> {
+pub struct LazySegmentTree<T, B, O, S, D> where B: BackingTree {
 	tree: B,
 	operator: O,
 	length: usize,
@@ -19,7 +19,7 @@ pub struct LazySegmentTree<T, B, O, S, D> where B: BackingTree<DeltaWrapper<T, D
 }
 
 impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
-	where O: AssociativeOperator<T>, B: BackingTree<DeltaWrapper<T, D>>,
+	where O: AssociativeOperator<T>, B: BackingTree<Value=DeltaWrapper<T, D>>,
 	      S: DeltaSifter<T, D>, D: Clone {
 	fn construct_recursively(values: &mut impl FixedDataSource<DeltaWrapper<T, D>>, operator: &mut O,
 	                         tree: &mut ImplicitTree<DeltaWrapper<T, D>>, range_left: usize,
@@ -49,7 +49,6 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 
 	fn query_recursively(&self, node: B::Identifier, left: usize, right: usize,
 	                     current_left: usize, current_right: usize) -> Option<OwningRef<T>> {
-		let range_length = (current_right - current_left) + 1;
 		self.sift_node(&node, current_left, current_right);
 
 		// Same as SegmentTree query_recursively
@@ -91,7 +90,6 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 
 	fn update_range_recursively(&mut self, node: B::Identifier, left: usize, right: usize,
 	                            current_left: usize, current_right: usize, delta: &D) {
-		let range_length = (current_right - current_left) + 1;
 		self.sift_node(&node, current_left, current_right);
 
 		let in_range = left <= current_left && current_right <= right;
@@ -170,7 +168,7 @@ impl<T, O, S, D> LazySegmentTree<T, ImplicitTree<DeltaWrapper<T, D>>, O, S, D>
 }
 
 impl<T, B, O, S, D> ::core::fmt::Debug for LazySegmentTree<T, B, O, S, D>
-	where B: ::core::fmt::Debug + BackingTree<DeltaWrapper<T, D>> {
+	where B: ::core::fmt::Debug + BackingTree {
 	fn fmt(&self, f: &mut ::core::fmt::Formatter) -> Result<(), ::core::fmt::Error> {
 		writeln!(f, "{:?}", self.tree)
 	}
@@ -220,5 +218,10 @@ mod tests {
 		assert_eq!(*tree.query(6, 6).deref(), 0);
 		assert_eq!(*tree.query(4, 6).deref(), 0);
 		assert_eq!(*tree.query(0, 5).deref(), 1);
+		tree.update_range(4, 5, &1000);
+		assert_eq!(*tree.query(6, 6).deref(), 0);
+		assert_eq!(*tree.query(0, 3).deref(), 1);
+		assert_eq!(*tree.query(0, 5).deref(), 1);
+		assert_eq!(*tree.query(5, 5).deref(), 1000);
 	}
 }

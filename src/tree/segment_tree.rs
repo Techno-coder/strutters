@@ -4,14 +4,14 @@ use super::BackingTree;
 use super::FixedDataSource;
 use super::ImplicitTree;
 
-pub struct SegmentTree<T, B, O> where B: BackingTree<T> {
+pub struct SegmentTree<T, B, O> where B: BackingTree {
 	tree: B,
 	operator: O,
 	length: usize,
 	_type: ::core::marker::PhantomData<T>,
 }
 
-impl<T, B, O> SegmentTree<T, B, O> where O: AssociativeOperator<T>, B: BackingTree<T> {
+impl<T, B, O> SegmentTree<T, B, O> where O: AssociativeOperator<T>, B: BackingTree<Value=T> {
 	fn construct_recursively(values: &mut impl FixedDataSource<T>, operator: &mut O, tree: &mut ImplicitTree<T>,
 	                         range_left: usize, range_right: usize, node: usize) {
 		if range_right == range_left {
@@ -123,7 +123,7 @@ impl<T, O> SegmentTree<T, ImplicitTree<T>, O> where O: AssociativeOperator<T> {
 	}
 }
 
-impl<T, B, O> ::core::fmt::Debug for SegmentTree<T, B, O> where B: ::core::fmt::Debug + BackingTree<T> {
+impl<T, B, O> ::core::fmt::Debug for SegmentTree<T, B, O> where B: ::core::fmt::Debug + BackingTree {
 	fn fmt(&self, f: &mut ::core::fmt::Formatter) -> Result<(), ::core::fmt::Error> {
 		writeln!(f, "{:?}", self.tree)
 	}

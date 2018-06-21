@@ -26,7 +26,8 @@ impl<T> ImplicitTree<T> {
 	}
 }
 
-impl<T> BackingTree<T> for ImplicitTree<T> {
+impl<T> BackingTree for ImplicitTree<T> {
+	type Value = T;
 	type Identifier = usize;
 
 	fn root(&self) -> usize {

@@ -1,9 +1,10 @@
-pub trait BackingTree<T> {
+pub trait BackingTree {
+	type Value;
 	type Identifier;
 
 	fn root(&self) -> Self::Identifier;
 
-	fn set_root(&mut self, value: T);
+	fn set_root(&mut self, value: Self::Value);
 
 	fn parent(&self, node: &Self::Identifier) -> Self::Identifier;
 
@@ -14,9 +15,9 @@ pub trait BackingTree<T> {
 	/// `child_index` must not be greater than the node width
 	fn child(&self, node: &Self::Identifier, child_index: usize) -> Self::Identifier;
 
-	fn get(&self, node: &Self::Identifier) -> Option<&T>;
+	fn get(&self, node: &Self::Identifier) -> Option<&Self::Value>;
 
-	fn get_mut(&mut self, node: &Self::Identifier) -> Option<&mut T>;
+	fn get_mut(&mut self, node: &Self::Identifier) -> Option<&mut Self::Value>;
 
 	/// Inserts a child node at the node referenced by `node`
 	/// Returns an identifier for the newly inserted node if successful
@@ -24,5 +25,5 @@ pub trait BackingTree<T> {
 	/// # Errors
 	///
 	/// Returns `None` if `node` does not exist
-	fn insert_child(&mut self, node: Self::Identifier, offset: usize, value: T) -> Option<Self::Identifier>;
+	fn insert_child(&mut self, node: Self::Identifier, offset: usize, value: Self::Value) -> Option<Self::Identifier>;
 }
