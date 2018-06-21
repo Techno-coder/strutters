@@ -7,8 +7,15 @@ Rust library for data structures [WIP]
 
 ## Data structures
 - Segment tree
-  - Vanilla
-  - Lazy propagation
+	- Vanilla
+	- Lazy propagation
+- Graph
+	- Adjacency list
+	
+## Algorithms
+- Graph
+	- Shortest path
+		- Dijkstra
 
 ## Specific details
 For `Segment tree` (and its variants) a closure needs to be implemented that implements `AssociativeOperator`. This closure produces the parent node of its child nodes. Some example associative operators are included in `tree/mod.rs`.
