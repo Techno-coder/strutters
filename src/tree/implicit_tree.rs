@@ -83,20 +83,20 @@ mod tests {
 	fn test() {
 		let mut tree = ImplicitTree::new(2);
 		tree.set_root(0);
-		assert_eq!(*tree.get(&tree.root()).unwrap(), 0);
+		assert_eq!(tree.get(&tree.root()), Some(&0));
 		assert_eq!(tree.child(&tree.root(), 1), 2);
 		assert!(tree.insert_child(0, 0, 3).is_some());
 		assert!(tree.insert_child(0, 1, 6).is_some());
-		assert_eq!(*tree.get(&tree.child(&tree.root(), 0)).unwrap(), 3);
-		assert_eq!(*tree.get(&tree.child(&tree.root(), 1)).unwrap(), 6);
+		assert_eq!(tree.get(&tree.child(&tree.root(), 0)), Some(&3));
+		assert_eq!(tree.get(&tree.child(&tree.root(), 1)), Some(&6));
 		assert!(tree.insert_child(1, 0, 9).is_some());
 		assert!(tree.insert_child(2, 1, 12).is_some());
-		assert_eq!(*tree.get(&tree.child(&1, 0)).unwrap(), 9);
-		assert_eq!(*tree.get(&tree.child(&2, 1)).unwrap(), 12);
+		assert_eq!(tree.get(&tree.child(&1, 0)), Some(&9));
+		assert_eq!(tree.get(&tree.child(&2, 1)), Some(&12));
 		assert_eq!(tree.insert_child(8, 0, 0), None);
 		assert_eq!(tree.parent(&2), 0);
-		assert_eq!(*tree.get(&tree.parent(&2)).unwrap(), 0);
+		assert_eq!(tree.get(&tree.parent(&2)), Some(&0));
 		unsafe { tree.insert_unchecked(3, 4); }
-		assert_eq!(*tree.get(&3).unwrap(), 4);
+		assert_eq!(tree.get(&3), Some(&4));
 	}
 }

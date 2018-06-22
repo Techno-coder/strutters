@@ -1,7 +1,7 @@
 use core::mem::replace;
 use core::ops::Deref;
 use core::ops::DerefMut;
-use OwningRef;
+use OwnedRef;
 use super::AssociativeOperator;
 use super::BackingTree;
 use super::DeltaSifter;
@@ -39,7 +39,7 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 		unsafe { tree.insert_unchecked(node, DeltaWrapper::new(value)) };
 	}
 
-	pub fn query(&self, left: usize, right: usize) -> OwningRef<T> {
+	pub fn query(&self, left: usize, right: usize) -> OwnedRef<T> {
 		assert!(left <= right);
 		assert!(right < self.length);
 		let root = self.tree.root();
@@ -48,7 +48,7 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 	}
 
 	fn query_recursively(&self, node: B::Identifier, left: usize, right: usize,
-	                     current_left: usize, current_right: usize) -> Option<OwningRef<T>> {
+	                     current_left: usize, current_right: usize) -> Option<OwnedRef<T>> {
 		self.sift_node(&node, current_left, current_right);
 
 		// Same as SegmentTree query_recursively
@@ -94,7 +94,7 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 
 		let in_range = left <= current_left && current_right <= right;
 		if in_range {
-			replace(self.tree.get_mut(&node).unwrap().delta.borrow_mut().deref_mut(), Some(delta.clone()));
+			self.tree.get_mut(&node).unwrap().delta.replace(Some(delta.clone()));
 			self.sift_node(&node, current_left, current_right);
 			return;
 		}
@@ -129,7 +129,7 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 			} else {
 				return;
 			}
-			replace(current_node.delta.borrow_mut().deref_mut(), None);
+			current_node.delta.replace(None);
 		}
 		if range_length == 1 { return; }
 
@@ -137,12 +137,12 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 		let left_child_node = self.tree.child(node, 0);
 		if let Some(left_child) = self.tree.get(&left_child_node) {
 			self.sift_node(&left_child_node, current_left, middle_left);
-			replace(left_child.delta.borrow_mut().deref_mut(), Some(node_delta.clone()));
+			left_child.delta.replace(Some(node_delta.clone()));
 		}
 		let right_child_node = self.tree.child(node, 1);
 		if let Some(right_child) = self.tree.get(&right_child_node) {
 			self.sift_node(&right_child_node, middle_right, current_right);
-			replace(right_child.delta.borrow_mut().deref_mut(), Some(node_delta.clone()));
+			right_child.delta.replace(Some(node_delta.clone()));
 		}
 	}
 }

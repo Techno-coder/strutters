@@ -1,7 +1,6 @@
 use collections::BinaryHeap;
 use collections::BTreeMap;
 use core::cmp::Ordering;
-use graph::Edge;
 use graph::Graph;
 use graph::Weight;
 use graph::WeightedEdge;
@@ -75,28 +74,21 @@ pub fn dijkstra<'g, G, E>(graph: &'g G, start: &'g E::Node, start_weight: E::Wei
 	});
 
 	while let Some(next) = queue.pop() {
-		if let Some(current_weight) = store.distances.get(next.node) {
+		if let Some(current_weight) = store.distance(next.node) {
 			if &next.weight > current_weight { continue; }
 		}
 
-		if let Some(neighbours) = graph.neighbours(next.node) {
-			for neighbour in neighbours {
-				let new_weight = E::Weight::combine(&neighbour.weight(), &next.weight);
-				if let Some(current_weight) = store.distances.get(next.node) {
-					if &new_weight < current_weight {
-						queue.push(DijkstraElement {
-							parent: Some(next.node),
-							node: neighbour.end_node(),
-							weight: new_weight,
-						});
-					}
-				} else {
-					queue.push(DijkstraElement {
-						parent: Some(next.node),
-						node: neighbour.end_node(),
-						weight: new_weight,
-					});
-				}
+		for neighbour in graph.neighbours(next.node) {
+			let new_weight = E::Weight::combine(&neighbour.weight(), &next.weight);
+			let prefer_new = store.distance(next.node)
+			                      .and_then(|weight| Some(&new_weight < weight))
+			                      .unwrap_or(true);
+			if prefer_new {
+				queue.push(DijkstraElement {
+					parent: Some(next.node),
+					node: neighbour.end_node(),
+					weight: new_weight,
+				});
 			}
 		}
 
@@ -124,9 +116,14 @@ mod tests {
 		graph.add_edge('a', GenericEdge::new('c', 5));
 
 		let store = dijkstra(&graph, &'a', 0);
-		assert_eq!(store.distance(&'a').unwrap(), &0);
-		assert_eq!(store.distance(&'b').unwrap(), &1);
-		assert_eq!(store.distance(&'c').unwrap(), &2);
-		assert_eq!(store.distance(&'d').unwrap(), &4);
+		assert_eq!(store.distance(&'a'), Some(&0));
+		assert_eq!(store.distance(&'b'), Some(&1));
+		assert_eq!(store.distance(&'c'), Some(&2));
+		assert_eq!(store.distance(&'d'), Some(&4));
+
+		assert_eq!(store.parent(&'a'), None);
+		assert_eq!(store.parent(&'b'), Some(&'a'));
+		assert_eq!(store.parent(&'c'), Some(&'b'));
+		assert_eq!(store.parent(&'d'), Some(&'b'));
 	}
 }

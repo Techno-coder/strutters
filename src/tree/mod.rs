@@ -14,10 +14,6 @@ pub mod delta;
 
 pub const BINARY_WIDTH: usize = 2;
 
-pub trait DefaultGenerator<T>: FnMut() -> T {}
-
-impl<F, T> DefaultGenerator<T> for F where F: ?Sized + FnMut() -> T {}
-
 pub trait FixedDataSource<T>: DoubleEndedIterator<Item=T> + ExactSizeIterator<Item=T> {}
 
 impl<T, I> FixedDataSource<T> for I where I: DoubleEndedIterator<Item=T> + ExactSizeIterator<Item=T> {}

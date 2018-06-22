@@ -13,3 +13,7 @@ pub trait WeightedEdge: Edge {
 pub trait Weight {
 	fn combine(left: &Self, right: &Self) -> Self;
 }
+
+pub trait SignedWeight: Weight {
+	fn negative(&self) -> bool;
+}

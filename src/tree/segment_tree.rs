@@ -1,4 +1,4 @@
-use OwningRef;
+use OwnedRef;
 use super::AssociativeOperator;
 use super::BackingTree;
 use super::FixedDataSource;
@@ -34,14 +34,14 @@ impl<T, B, O> SegmentTree<T, B, O> where O: AssociativeOperator<T>, B: BackingTr
 	///
 	/// `left` cannot be greater than `right`
 	/// `right` must be less than the length of the input array
-	pub fn query(&self, left: usize, right: usize) -> OwningRef<T> {
+	pub fn query(&self, left: usize, right: usize) -> OwnedRef<T> {
 		assert!(left <= right);
 		assert!(right < self.length);
 		self.query_recursively(self.tree.root(), left, right, 0, self.length - 1).unwrap()
 	}
 
 	fn query_recursively(&self, node: B::Identifier, left: usize, right: usize,
-	                     current_left: usize, current_right: usize) -> Option<OwningRef<T>> {
+	                     current_left: usize, current_right: usize) -> Option<OwnedRef<T>> {
 		let in_range = left <= current_left && current_right <= right;
 		if in_range { return self.tree.get(&node).and_then(|reference| Some(reference.into())); }
 

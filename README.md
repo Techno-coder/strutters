@@ -16,6 +16,7 @@ Rust library for data structures [WIP]
 - Graph
 	- Shortest path
 		- Dijkstra
+		- Floyd-Warshall
 
 ## Specific details
 For segment trees, a closure needs to be implemented that implements `AssociativeOperator`. This closure produces the parent node of its child nodes. Some example associative operators are included in `tree/mod.rs`.

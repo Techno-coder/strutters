@@ -1,13 +1,13 @@
-use super::DefaultGenerator;
+use Provider;
 use Vec;
 
-pub fn extend_inclusive<T, D>(vector: &mut Vec<T>, index: usize, default: &mut D) where D: DefaultGenerator<T> {
+pub fn extend_inclusive<T, P>(vector: &mut Vec<T>, index: usize, default: P) where P: Provider<T> {
 	extend_until(vector, index + 1, default);
 }
 
-pub fn extend_until<T, D>(vector: &mut Vec<T>, index: usize, default: &mut D) where D: DefaultGenerator<T> {
+pub fn extend_until<T, P>(vector: &mut Vec<T>, index: usize, default: P) where P: Provider<T> {
 	for _ in vector.len()..index {
-		vector.push(default());
+		vector.push(default.create());
 	}
 }
 

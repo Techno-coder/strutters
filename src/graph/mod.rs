@@ -1,5 +1,6 @@
 pub use self::adjacency_list::AdjacencyList;
 pub use self::edge::Edge;
+pub use self::edge::SignedWeight;
 pub use self::edge::Weight;
 pub use self::edge::WeightedEdge;
 pub use self::generic_edge::GenericEdge;
