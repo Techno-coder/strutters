@@ -64,21 +64,21 @@ pub fn floyd<'g, G, E, P>(graph: &'g G, default: Option<P>) -> Floyd<'g, E>
 		for start in graph.nodes() {
 			for end in graph.nodes() {
 				let new_distance = (|| {
-					let start_to_middle = store.distance(start, middle)?;
-					let middle_to_end = store.distance(middle, end)?;
+					let start_to_middle = store.distance(&start, &middle)?;
+					let middle_to_end = store.distance(&middle, &end)?;
 					Some(E::Weight::combine(&start_to_middle, &middle_to_end))
 				})();
 
 				if let Some(new_distance) = new_distance {
-					let prefer_new = store.distance(start, end)
+					let prefer_new = store.distance(&start, &end)
 					                      .and_then(|distance| Some(&new_distance < distance))
 					                      .unwrap_or(true);
 					if prefer_new {
-						store.distances.entry(start).or_insert(BTreeMap::new())
-						     .insert(end, new_distance.into());
-						let next = store.next[start][middle];
-						store.next.entry(start).or_insert(BTreeMap::new())
-						     .insert(end, next);
+						store.distances.entry(&start).or_insert(BTreeMap::new())
+						     .insert(&end, new_distance.into());
+						let next = store.next[start.deref()][middle.deref()];
+						store.next.entry(&start).or_insert(BTreeMap::new())
+						     .insert(&end, next);
 					}
 				}
 			}
@@ -89,23 +89,23 @@ pub fn floyd<'g, G, E, P>(graph: &'g G, default: Option<P>) -> Floyd<'g, E>
 }
 
 fn populate_defaults<'g, G, E, P>(graph: &'g G, store: &mut Floyd<'g, E>, default: Option<P>)
-	where G: Graph<'g, Edge=E>, E: WeightedEdge, E::Node: Ord, P: Provider<E::Weight> {
+	where G: Graph<'g, Edge=E>, E: WeightedEdge, P: Provider<E::Weight> {
 	for node in graph.nodes() {
-		for edge in graph.neighbours(node) {
-			store.distances.entry(node).or_insert(BTreeMap::new())
-			     .insert(edge.end_node(), edge.weight().into());
-			store.next.entry(node).or_insert(BTreeMap::new())
-			     .insert(edge.end_node(), edge.end_node());
+		for edge in graph.neighbours(&node) {
+			store.distances.entry(&node).or_insert(BTreeMap::new())
+			     .insert(&edge.end_node(), edge.weight().into());
+			store.next.entry(&node).or_insert(BTreeMap::new())
+			     .insert(&edge.end_node(), &edge.end_node());
 		}
 
 		if let Some(ref default) = default {
 			let default = default.create();
-			let prefer_default = store.distance(node, node)
+			let prefer_default = store.distance(&node, &node)
 			                          .and_then(|distance| Some(&default < &distance))
 			                          .unwrap_or(true);
 			if prefer_default {
-				store.distances.entry(node).or_insert(BTreeMap::new())
-				     .insert(node, default.into());
+				store.distances.entry(&node).or_insert(BTreeMap::new())
+				     .insert(&node, default.into());
 			}
 		}
 	}

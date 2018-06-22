@@ -16,7 +16,7 @@ impl<T, W> GenericEdge<T, W> {
 	}
 }
 
-impl<T, W> Edge for GenericEdge<T, W> {
+impl<T, W> Edge for GenericEdge<T, W> where T: Ord {
 	type Node = T;
 
 	fn end_node(&self) -> &<Self as Edge>::Node {
@@ -24,10 +24,30 @@ impl<T, W> Edge for GenericEdge<T, W> {
 	}
 }
 
-impl<T, W> WeightedEdge for GenericEdge<T, W> where W: Weight + Ord {
+impl<T, W> WeightedEdge for GenericEdge<T, W> where T: Ord, W: Weight + Ord {
 	type Weight = W;
 
 	fn weight(&self) -> &<Self as WeightedEdge>::Weight {
 		&self.weight
+	}
+}
+
+pub struct WeightlessEdge<T> {
+	edge: GenericEdge<T, ()>,
+}
+
+impl<T> WeightlessEdge<T> {
+	pub fn new(end_node: T) -> WeightlessEdge<T> {
+		WeightlessEdge {
+			edge: GenericEdge::new(end_node, ()),
+		}
+	}
+}
+
+impl<T> Edge for WeightlessEdge<T> where T: Ord {
+	type Node = T;
+
+	fn end_node(&self) -> &<Self as Edge>::Node {
+		self.edge.end_node()
 	}
 }

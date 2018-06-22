@@ -1,6 +1,7 @@
 pub trait BackingTree {
 	type Value;
 	type Identifier;
+	type ChildIterator: Iterator<Item=Self::Identifier>;
 
 	fn root(&self) -> Self::Identifier;
 
@@ -14,6 +15,8 @@ pub trait BackingTree {
 	///
 	/// `child_index` must not be greater than the node width
 	fn child(&self, node: &Self::Identifier, child_index: usize) -> Self::Identifier;
+
+	fn children(&self, node: &Self::Identifier) -> Self::ChildIterator;
 
 	fn get(&self, node: &Self::Identifier) -> Option<&Self::Value>;
 

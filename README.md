@@ -11,12 +11,17 @@ Rust library for data structures [WIP]
 	- Lazy propagation
 - Graph
 	- Adjacency list
+- Tree
+	- Implicit (array based)
 	
 ## Algorithms
 - Graph
 	- Shortest path
 		- Dijkstra
 		- Floyd-Warshall
+	- Traversal
+		- Breadth first
+		- Depth first
 
 ## Specific details
 For segment trees, a closure needs to be implemented that implements `AssociativeOperator`. This closure produces the parent node of its child nodes. Some example associative operators are included in `tree/mod.rs`.

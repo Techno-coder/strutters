@@ -4,8 +4,10 @@ pub use self::edge::SignedWeight;
 pub use self::edge::Weight;
 pub use self::edge::WeightedEdge;
 pub use self::generic_edge::GenericEdge;
+pub use self::generic_edge::WeightlessEdge;
 pub use self::graph::Graph;
 
+pub mod traversal;
 pub mod graph;
 pub mod edge;
 pub mod adjacency_list;

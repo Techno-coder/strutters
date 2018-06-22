@@ -1,5 +1,5 @@
 pub trait Edge {
-	type Node;
+	type Node: Ord;
 
 	fn end_node(&self) -> &Self::Node;
 }

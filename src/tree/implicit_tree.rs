@@ -29,6 +29,7 @@ impl<T> ImplicitTree<T> {
 impl<T> BackingTree for ImplicitTree<T> {
 	type Value = T;
 	type Identifier = usize;
+	type ChildIterator = ::core::ops::Range<usize>;
 
 	fn root(&self) -> usize {
 		0
@@ -46,6 +47,10 @@ impl<T> BackingTree for ImplicitTree<T> {
 	fn child(&self, node: &usize, child_index: usize) -> usize {
 		assert!(child_index < self.width);
 		(self.width * node) + (child_index + 1)
+	}
+
+	fn children(&self, node: &<Self as BackingTree>::Identifier) -> <Self as BackingTree>::ChildIterator {
+		self.child(node, 0)..self.child(node, self.width)
 	}
 
 	fn get(&self, node: &usize) -> Option<&T> {
