@@ -31,6 +31,7 @@ impl<'g, G, E> Iterator for BreadthFirst<'g, G, E> where G: Graph<'g, Edge=E>, E
 		for neighbour in self.graph.neighbours(next) {
 			if !self.visited.contains(neighbour.end_node()) {
 				self.queue.push_back(neighbour.end_node());
+				self.visited.insert(next);
 			}
 		}
 		Some(next)
