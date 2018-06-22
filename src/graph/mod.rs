@@ -1,11 +1,14 @@
 pub use self::adjacency_list::AdjacencyList;
 pub use self::edge::Edge;
+pub use self::edge::ReversibleEdge;
 pub use self::edge::SignedWeight;
 pub use self::edge::Weight;
 pub use self::edge::WeightedEdge;
 pub use self::generic_edge::GenericEdge;
 pub use self::generic_edge::WeightlessEdge;
 pub use self::graph::Graph;
+pub use self::graph::MutableGraph;
+pub use self::undirected_graph::UndirectedGraph;
 
 pub mod traversal;
 pub mod graph;
@@ -14,3 +17,4 @@ pub mod adjacency_list;
 pub mod generic_edge;
 pub mod numerical_weight;
 pub mod shortest_path;
+pub mod undirected_graph;

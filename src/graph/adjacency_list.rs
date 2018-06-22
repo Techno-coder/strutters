@@ -1,12 +1,13 @@
 use collections::BTreeMap;
 use super::Edge;
 use super::Graph;
+use super::MutableGraph;
 use Vec;
 
 pub struct AdjacencyList<'g, E> where E: Edge + 'g {
 	edges: BTreeMap<E::Node, Vec<E>>,
 	_empty: Vec<E>,
-	_lifetime: ::core::marker::PhantomData<&'g AdjacencyList<'g, E>>,
+	_lifetime: ::core::marker::PhantomData<&'g ()>,
 }
 
 impl<'g, E> AdjacencyList<'g, E> where E: Edge, E::Node: Ord {
@@ -17,13 +18,9 @@ impl<'g, E> AdjacencyList<'g, E> where E: Edge, E::Node: Ord {
 			_lifetime: Default::default(),
 		}
 	}
-
-	pub fn add_edge(&mut self, start: E::Node, edge: E) {
-		self.edges.entry(start).or_insert(Vec::new()).push(edge);
-	}
 }
 
-impl<'g, E> Graph<'g> for AdjacencyList<'g, E> where E: Edge + 'g, E::Node: Ord {
+impl<'g, E> Graph<'g> for AdjacencyList<'g, E> where E: 'g + Edge {
 	type Edge = E;
 	type NodeIterator = ::collections::btree_map::Keys<'g, E::Node, Vec<E>>;
 	type EdgeIterator = ::core::slice::Iter<'g, E>;
@@ -34,5 +31,11 @@ impl<'g, E> Graph<'g> for AdjacencyList<'g, E> where E: Edge + 'g, E::Node: Ord 
 
 	fn neighbours(&'g self, node: &E::Node) -> <Self as Graph>::EdgeIterator {
 		self.edges.get(node).or(Some(&self._empty)).unwrap().iter()
+	}
+}
+
+impl<'g, E> MutableGraph<'g> for AdjacencyList<'g, E> where E: 'g + Edge {
+	fn add_edge(&mut self, start: E::Node, edge: E) {
+		self.edges.entry(start).or_insert(Vec::new()).push(edge);
 	}
 }

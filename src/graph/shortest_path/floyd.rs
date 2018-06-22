@@ -117,6 +117,7 @@ mod tests {
 
 	#[test]
 	fn test() {
+		use graph::MutableGraph;
 		use graph::GenericEdge;
 
 		let mut graph = ::graph::AdjacencyList::new();

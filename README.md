@@ -11,6 +11,7 @@ Rust library for data structures [WIP]
 	- Lazy propagation
 - Graph
 	- Adjacency list
+	- Undirected
 - Tree
 	- Implicit (array based)
 	

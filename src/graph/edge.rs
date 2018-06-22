@@ -10,6 +10,10 @@ pub trait WeightedEdge: Edge {
 	fn weight(&self) -> &Self::Weight;
 }
 
+pub trait ReversibleEdge: Edge {
+	fn reverse(&self, start: &Self::Node) -> (Self::Node, Self);
+}
+
 pub trait Weight {
 	fn combine(left: &Self, right: &Self) -> Self;
 }

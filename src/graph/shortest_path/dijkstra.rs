@@ -78,15 +78,15 @@ pub fn dijkstra<'g, G, E>(graph: &'g G, start: &'g E::Node, start_weight: E::Wei
 			if &next.weight > current_weight { continue; }
 		}
 
-		for neighbour in graph.neighbours(next.node) {
-			let new_weight = E::Weight::combine(&neighbour.weight(), &next.weight);
+		for edge in graph.neighbours(next.node) {
+			let new_weight = E::Weight::combine(&edge.weight(), &next.weight);
 			let prefer_new = store.distance(next.node)
 			                      .and_then(|weight| Some(&new_weight < weight))
 			                      .unwrap_or(true);
 			if prefer_new {
 				queue.push(DijkstraElement {
 					parent: Some(next.node),
-					node: neighbour.end_node(),
+					node: edge.end_node(),
 					weight: new_weight,
 				});
 			}
@@ -107,6 +107,7 @@ mod tests {
 
 	#[test]
 	fn test() {
+		use graph::MutableGraph;
 		use graph::GenericEdge;
 
 		let mut graph = ::graph::AdjacencyList::new();

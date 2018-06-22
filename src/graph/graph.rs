@@ -8,3 +8,7 @@ pub trait Graph<'g> {
 	fn nodes(&'g self) -> Self::NodeIterator;
 	fn neighbours(&'g self, node: &<Self::Edge as Edge>::Node) -> Self::EdgeIterator;
 }
+
+pub trait MutableGraph<'g>: Graph<'g> {
+	fn add_edge(&mut self, start: <Self::Edge as Edge>::Node, edge: Self::Edge);
+}
