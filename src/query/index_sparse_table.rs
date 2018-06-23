@@ -1,4 +1,5 @@
 use Vec;
+use math::integer_log2;
 
 /// `IndexSparseTable` allows efficient range queries against immutable data
 ///
@@ -20,7 +21,7 @@ impl<'t, T> IndexSparseTable<'t, T> where T: Ord {
 		let length = data.len();
 		table.push((0..length).collect());
 
-		for level in 1..=(length as f32).log2() as _ {
+		for level in 1..=integer_log2(length as u64) as _ {
 			table.push(Vec::new());
 			for left_interval in 0..=(length - (1 << level)) {
 				let previous_level = level - 1;
@@ -47,7 +48,7 @@ impl<'t, T> IndexSparseTable<'t, T> where T: Ord {
 	pub fn query_index(&self, left: usize, right: usize) -> usize {
 		assert!(left <= right && right < self.table[0].len());
 		let range_length = right - left;
-		let level = ((range_length + 1) as f32).log2() as usize;
+		let level = integer_log2(range_length as u64 + 1) as usize;
 		let right_range_index = (right + 1) - (1 << level);
 
 		let left_range_index = self.table[level][left];

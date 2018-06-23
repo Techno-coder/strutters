@@ -21,6 +21,7 @@ pub mod query;
 pub mod tree;
 pub mod graph;
 pub mod provider;
+pub mod math;
 mod owned_ref;
 
 pub trait FixedDataSource<T>: DoubleEndedIterator<Item=T> + ExactSizeIterator<Item=T> {}
