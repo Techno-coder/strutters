@@ -1,9 +1,25 @@
+use FixedDataSource;
+use operator::AssociativeOperator;
 use OwnedRef;
-use super::AssociativeOperator;
 use super::BackingTree;
-use super::FixedDataSource;
 use super::ImplicitTree;
 
+/// SegmentTree efficiently calculates a value in a range
+///
+/// It may be useful to do arbitrary range queries on an array such as the
+/// maximum or minimum of a given range. Additionally, these
+/// values may need to be changed or updated. Segment trees
+/// allows these operations to be done efficiently:
+/// - Construct: O(`n`)
+/// - Query: O(`log n`)
+/// - Update: O(`log n`)
+///
+/// If updates need to be done over a range then `LazySegmentTree` may
+/// be more appropriate.
+///
+/// If updates are not needed and overlapping ranges produce
+/// a valid value (ie. idempotent) then a `SparseTable` can be used instead with
+/// queries of O(`1`)
 pub struct SegmentTree<T, B, O> where B: BackingTree {
 	tree: B,
 	operator: O,
@@ -35,8 +51,7 @@ impl<T, B, O> SegmentTree<T, B, O> where O: AssociativeOperator<T>, B: BackingTr
 	/// `left` cannot be greater than `right`
 	/// `right` must be less than the length of the input array
 	pub fn query(&self, left: usize, right: usize) -> OwnedRef<T> {
-		assert!(left <= right);
-		assert!(right < self.length);
+		assert!(left <= right && right < self.length);
 		self.query_recursively(self.tree.root(), left, right, 0, self.length - 1).unwrap()
 	}
 
@@ -137,7 +152,7 @@ mod tests {
 	fn test_summation() {
 		use core::ops::Deref;
 		let data = vec![1, 2, 3, 4, 5, 6, 7];
-		let mut tree = SegmentTree::construct_implicit(data.into_iter(), ::tree::summation());
+		let mut tree = SegmentTree::construct_implicit(data.into_iter(), ::operator::summation());
 		assert_eq!(*tree.query(0, 3).deref(), 1 + 2 + 3 + 4);
 		assert_eq!(*tree.query(0, 6).deref(), 1 + 2 + 3 + 4 + 5 + 6 + 7);
 		assert_eq!(*tree.query(4, 6).deref(), 5 + 6 + 7);
@@ -153,7 +168,7 @@ mod tests {
 	fn test_minimum() {
 		use core::ops::Deref;
 		let data = vec![1, 2, 3, 4, 5, 6, 7];
-		let mut tree = SegmentTree::construct_implicit(data.into_iter(), ::tree::minimum());
+		let mut tree = SegmentTree::construct_implicit(data.into_iter(), ::operator::minimum());
 		assert_eq!(*tree.query(0, 3).deref(), 1);
 		assert_eq!(*tree.query(0, 6).deref(), 1);
 		assert_eq!(*tree.query(4, 6).deref(), 5);

@@ -1,14 +1,19 @@
 use core::mem::replace;
 use core::ops::Deref;
 use core::ops::DerefMut;
+use FixedDataSource;
+use operator::AssociativeOperator;
 use OwnedRef;
-use super::AssociativeOperator;
 use super::BackingTree;
 use super::DeltaSifter;
 use super::DeltaWrapper;
-use super::FixedDataSource;
 use super::ImplicitTree;
 
+/// A variant of `SegmentTree` that allows range updates
+///
+/// `LazySegmentTree` allows range queries to be pending and only
+/// executed when needed. The cost is then added to the query operation
+/// if an update is pending.
 pub struct LazySegmentTree<T, B, O, S, D> where B: BackingTree {
 	tree: B,
 	operator: O,
@@ -40,8 +45,7 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 	}
 
 	pub fn query(&self, left: usize, right: usize) -> OwnedRef<T> {
-		assert!(left <= right);
-		assert!(right < self.length);
+		assert!(left <= right && right < self.length);
 		let root = self.tree.root();
 		let last = self.length - 1;
 		self.query_recursively(root, left, right, 0, last).unwrap()
@@ -81,8 +85,7 @@ impl<T, B, O, S, D> LazySegmentTree<T, B, O, S, D>
 	}
 
 	pub fn update_range(&mut self, left: usize, right: usize, delta: &D) {
-		assert!(left <= right);
-		assert!(right < self.length);
+		assert!(left <= right && right < self.length);
 		let root = self.tree.root();
 		let last = self.length - 1;
 		self.update_range_recursively(root, left, right, 0, last, delta);
@@ -183,7 +186,7 @@ mod tests {
 		use core::ops::Deref;
 		let data = vec![1, 2, 3, 4, 5, 6, 7];
 		let sifter = |current: &i32, delta: &i32, length: usize| *current + (*delta * length as i32);
-		let mut tree = LazySegmentTree::construct_implicit(data.into_iter(), ::tree::summation(), sifter);
+		let mut tree = LazySegmentTree::construct_implicit(data.into_iter(), ::operator::summation(), sifter);
 		assert_eq!(*tree.query(0, 3).deref(), 1 + 2 + 3 + 4);
 		assert_eq!(*tree.query(0, 6).deref(), 1 + 2 + 3 + 4 + 5 + 6 + 7);
 		assert_eq!(*tree.query(4, 6).deref(), 5 + 6 + 7);
@@ -208,7 +211,7 @@ mod tests {
 		use core::ops::Deref;
 		let data = vec![1, 2, 3, 4, 5, 6, 7];
 		let sifter = |_: &u32, delta: &u32, _| *delta;
-		let mut tree = LazySegmentTree::construct_implicit(data.into_iter(), ::tree::minimum(), sifter);
+		let mut tree = LazySegmentTree::construct_implicit(data.into_iter(), ::operator::minimum(), sifter);
 		assert_eq!(*tree.query(0, 3).deref(), 1);
 		assert_eq!(*tree.query(0, 6).deref(), 1);
 		assert_eq!(*tree.query(4, 6).deref(), 5);

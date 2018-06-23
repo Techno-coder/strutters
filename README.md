@@ -14,6 +14,8 @@ Rust library for data structures [WIP]
 	- Undirected
 - Tree
 	- Implicit (array based)
+- Sparse table
+	- Index sparse table
 	
 ## Algorithms
 - Graph

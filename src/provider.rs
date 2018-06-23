@@ -1,4 +1,4 @@
-/// The `Provider` trait to abstract over different methods of providing values.
+/// The `Provider` trait abstracts over different methods of providing values.
 ///
 /// Due to Rust's coherence requirement, `Provider` cannot normally be implemented for
 /// both cloneable types and closures that return the required type. However, we can use
