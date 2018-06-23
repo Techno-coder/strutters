@@ -16,6 +16,7 @@ Rust library for data structures [WIP]
 	- Implicit (array based)
 - Sparse table
 	- Index sparse table
+	- Fully associative sparse table
 	
 ## Algorithms
 - Graph
@@ -25,6 +26,8 @@ Rust library for data structures [WIP]
 	- Traversal
 		- Breadth first
 		- Depth first
+- Math
+	- Greatest common divisor
 
 ## Specific details
 For segment trees, a closure needs to be implemented that implements `AssociativeOperator`. This closure produces the parent node of its child nodes. Some example associative operators are included in `tree/mod.rs`.

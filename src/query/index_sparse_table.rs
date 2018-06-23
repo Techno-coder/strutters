@@ -1,5 +1,5 @@
-use Vec;
 use math::integer_log2;
+use Vec;
 
 /// `IndexSparseTable` allows efficient range queries against immutable data
 ///
@@ -72,8 +72,8 @@ mod tests {
 
 	#[test]
 	fn test() {
-		let data = vec![1, 2, 3, 4, 5, 6, 7];
-		let table = IndexSparseTable::compute(&data);
+		let data = &[1, 2, 3, 4, 5, 6, 7];
+		let table = IndexSparseTable::compute(data);
 		for right in 0..=6 {
 			for left in 0..=right {
 				assert_eq!(table.query(left, right), &(right + 1));
