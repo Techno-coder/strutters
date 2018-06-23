@@ -3,6 +3,14 @@ name = "strutters"
 version = "0.1.0"
 authors = ["Techno-coder <8334328+Techno-coder@users.noreply.github.com>"]
 
+description = "Rust library for various data structures and algorithms"
+keywords = ["graph", "tree", "query"]
+categories = ["algorithms", "data-structures", "no-std"]
+
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/Techno-coder/strutters/"
+
 [features]
 default-features = ["std"]
 std = []
