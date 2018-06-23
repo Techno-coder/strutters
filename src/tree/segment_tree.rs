@@ -4,7 +4,7 @@ use OwnedRef;
 use super::BackingTree;
 use super::ImplicitTree;
 
-/// SegmentTree efficiently calculates a value in a range
+/// `SegmentTree` efficiently calculates a value in a range
 ///
 /// It may be useful to do arbitrary range queries on an array such as the
 /// maximum or minimum of a given range. Additionally, these
@@ -18,7 +18,7 @@ use super::ImplicitTree;
 /// be more appropriate.
 ///
 /// If updates are not needed and overlapping ranges produce
-/// a valid value (ie. idempotent) then a `SparseTable` can be used instead with
+/// a valid value (ie. idempotent) then an `IndexSparseTable` can be used instead with
 /// queries of O(`1`)
 pub struct SegmentTree<T, B, O> where B: BackingTree {
 	tree: B,

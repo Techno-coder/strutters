@@ -1,4 +1,5 @@
-pub use self::dijkstra::dijkstra;
+pub use self::dijkstra::Dijkstra;
+pub use self::floyd::Floyd;
 
-pub mod dijkstra;
-pub mod floyd;
+mod dijkstra;
+mod floyd;

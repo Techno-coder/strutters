@@ -11,10 +11,10 @@ pub use self::graph::MutableGraph;
 pub use self::undirected_graph::UndirectedGraph;
 
 pub mod traversal;
-pub mod graph;
-pub mod edge;
-pub mod adjacency_list;
-pub mod generic_edge;
-pub mod numerical_weight;
 pub mod shortest_path;
-pub mod undirected_graph;
+mod graph;
+mod edge;
+mod adjacency_list;
+mod generic_edge;
+mod numerical_weight;
+mod undirected_graph;

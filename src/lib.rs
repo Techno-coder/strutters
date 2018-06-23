@@ -11,7 +11,6 @@ extern crate std;
 #[cfg(not(feature = "std"))]
 use collections::Vec;
 pub use self::owned_ref::OwnedRef;
-pub use self::provider::Provider;
 #[cfg(feature = "std")]
 use std::collections as collections;
 #[cfg(feature = "std")]
@@ -22,7 +21,7 @@ pub mod query;
 pub mod tree;
 pub mod graph;
 pub mod provider;
-pub mod owned_ref;
+mod owned_ref;
 
 pub trait FixedDataSource<T>: DoubleEndedIterator<Item=T> + ExactSizeIterator<Item=T> {}
 

@@ -18,6 +18,50 @@ impl<'a, E> Dijkstra<'a, E> where E: WeightedEdge, E::Node: Ord {
 		}
 	}
 
+	/// Calculates the shortest distance to any node from a single source
+	///
+	/// # Arguments
+	///
+	/// - `start_weight` specifies the distance to the source node
+	pub fn compute<'g, G>(graph: &'g G, start: &'g E::Node, start_weight: E::Weight)
+	                      -> Dijkstra<'g, E> where G: Graph<'g, Edge=E>, E: WeightedEdge, E::Node: Ord {
+		let mut store = Dijkstra::new();
+		let mut queue: BinaryHeap<DijkstraElement<E>> = BinaryHeap::new();
+
+		queue.push(DijkstraElement {
+			parent: None,
+			node: &start,
+			weight: start_weight,
+		});
+
+		while let Some(next) = queue.pop() {
+			if let Some(current_weight) = store.distance(next.node) {
+				if &next.weight > current_weight { continue; }
+			}
+
+			for edge in graph.neighbours(next.node) {
+				let new_weight = E::Weight::combine(&edge.weight(), &next.weight);
+				let prefer_new = store.distance(next.node)
+				                      .and_then(|weight| Some(&new_weight < weight))
+				                      .unwrap_or(true);
+				if prefer_new {
+					queue.push(DijkstraElement {
+						parent: Some(next.node),
+						node: edge.end_node(),
+						weight: new_weight,
+					});
+				}
+			}
+
+			store.distances.insert(next.node, next.weight);
+			if let Some(parent) = next.parent {
+				store.parents.insert(next.node, parent);
+			}
+		}
+
+		store
+	}
+
 	pub fn distance(&self, node: &E::Node) -> Option<&E::Weight> {
 		self.distances.get(node)
 	}
@@ -62,45 +106,6 @@ impl<'a, E> Ord for DijkstraElement<'a, E> where E: WeightedEdge {
 	}
 }
 
-pub fn dijkstra<'g, G, E>(graph: &'g G, start: &'g E::Node, start_weight: E::Weight)
-                          -> Dijkstra<'g, E> where G: Graph<'g, Edge=E>, E: WeightedEdge, E::Node: Ord {
-	let mut store = Dijkstra::new();
-	let mut queue: BinaryHeap<DijkstraElement<E>> = BinaryHeap::new();
-
-	queue.push(DijkstraElement {
-		parent: None,
-		node: &start,
-		weight: start_weight,
-	});
-
-	while let Some(next) = queue.pop() {
-		if let Some(current_weight) = store.distance(next.node) {
-			if &next.weight > current_weight { continue; }
-		}
-
-		for edge in graph.neighbours(next.node) {
-			let new_weight = E::Weight::combine(&edge.weight(), &next.weight);
-			let prefer_new = store.distance(next.node)
-			                      .and_then(|weight| Some(&new_weight < weight))
-			                      .unwrap_or(true);
-			if prefer_new {
-				queue.push(DijkstraElement {
-					parent: Some(next.node),
-					node: edge.end_node(),
-					weight: new_weight,
-				});
-			}
-		}
-
-		store.distances.insert(next.node, next.weight);
-		if let Some(parent) = next.parent {
-			store.parents.insert(next.node, parent);
-		}
-	}
-
-	store
-}
-
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -116,7 +121,7 @@ mod tests {
 		graph.add_edge('b', GenericEdge::new('d', 3));
 		graph.add_edge('a', GenericEdge::new('c', 5));
 
-		let store = dijkstra(&graph, &'a', 0);
+		let store = Dijkstra::compute(&graph, &'a', 0);
 		assert_eq!(store.distance(&'a'), Some(&0));
 		assert_eq!(store.distance(&'b'), Some(&1));
 		assert_eq!(store.distance(&'c'), Some(&2));

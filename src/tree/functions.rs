@@ -1,4 +1,4 @@
-use Provider;
+use provider::Provider;
 use Vec;
 
 pub fn extend_inclusive<T, P>(vector: &mut Vec<T>, index: usize, default: P) where P: Provider<T> {

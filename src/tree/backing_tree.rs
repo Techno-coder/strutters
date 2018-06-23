@@ -13,7 +13,7 @@ pub trait BackingTree {
 	///
 	/// # Panics
 	///
-	/// `child_index` must not be greater than the node width
+	/// `child_index` must not be greater than the number of children at this node
 	fn child(&self, node: &Self::Identifier, child_index: usize) -> Self::Identifier;
 
 	fn children(&self, node: &Self::Identifier) -> Self::ChildIterator;
@@ -22,8 +22,8 @@ pub trait BackingTree {
 
 	fn get_mut(&mut self, node: &Self::Identifier) -> Option<&mut Self::Value>;
 
-	/// Inserts a child node at the node referenced by `node`
-	/// Returns an identifier for the newly inserted node if successful
+	/// Inserts a child node at the node referenced by `node` and returns
+	/// an identifier for the newly inserted node if successful
 	///
 	/// # Errors
 	///
