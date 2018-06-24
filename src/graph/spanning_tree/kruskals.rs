@@ -6,7 +6,7 @@ use graph::ReversibleEdge;
 use graph::UndirectedGraph;
 use graph::WeightedEdge;
 use query::DisjointSet;
-use std::vec::Vec;
+use Vec;
 
 pub struct Kruskals<'g, E> where E: 'g + WeightedEdge {
 	set: DisjointSet<&'g E::Node>,

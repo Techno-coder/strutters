@@ -87,35 +87,26 @@ impl<'a, E> Eq for DijkstraElement<'a, E> where E: WeightedEdge {}
 
 impl<'a, E> PartialOrd for DijkstraElement<'a, E> where E: WeightedEdge {
 	fn partial_cmp(&self, other: &DijkstraElement<E>) -> Option<Ordering> {
-		let ordering = self.weight.partial_cmp(&other.weight)?;
-		Some(match ordering {
-			Ordering::Less => Ordering::Greater,
-			Ordering::Equal => Ordering::Equal,
-			Ordering::Greater => Ordering::Less,
-		})
+		other.weight.partial_cmp(&self.weight)
 	}
 }
 
 impl<'a, E> Ord for DijkstraElement<'a, E> where E: WeightedEdge {
 	fn cmp(&self, other: &Self) -> Ordering {
-		match self.weight.cmp(&other.weight) {
-			Ordering::Less => Ordering::Greater,
-			Ordering::Equal => Ordering::Equal,
-			Ordering::Greater => Ordering::Less,
-		}
+		self.partial_cmp(other).unwrap()
 	}
 }
 
 #[cfg(test)]
 mod tests {
+	use graph::AdjacencyList;
+	use graph::HalfEdge;
+	use graph::MutableGraph;
 	use super::*;
 
 	#[test]
 	fn test() {
-		use graph::MutableGraph;
-		use graph::HalfEdge;
-
-		let mut graph = ::graph::AdjacencyList::new();
+		let mut graph = AdjacencyList::new();
 		graph.add_edge('a', HalfEdge::new('b', 1));
 		graph.add_edge('b', HalfEdge::new('c', 1));
 		graph.add_edge('b', HalfEdge::new('d', 3));
@@ -131,5 +122,28 @@ mod tests {
 		assert_eq!(store.parent(&'b'), Some(&'a'));
 		assert_eq!(store.parent(&'c'), Some(&'b'));
 		assert_eq!(store.parent(&'d'), Some(&'b'));
+	}
+
+	#[test]
+	fn test_another() {
+		let mut graph = AdjacencyList::new();
+		graph.add_edge(1, HalfEdge::new(4, 3));
+		graph.add_edge(2, HalfEdge::new(1, 3));
+		graph.add_edge(3, HalfEdge::new(4, 2));
+		graph.add_edge(4, HalfEdge::new(2, 1));
+		graph.add_edge(4, HalfEdge::new(3, 1));
+		graph.add_edge(5, HalfEdge::new(4, 2));
+
+		let store = Dijkstra::compute(&graph, &1, 0);
+		assert_eq!(store.distance(&2), Some(&4));
+		assert_eq!(store.distance(&3), Some(&4));
+		assert_eq!(store.distance(&4), Some(&3));
+		assert_eq!(store.distance(&5), None);
+
+		let store = Dijkstra::compute(&graph, &2, 0);
+		assert_eq!(store.distance(&1), Some(&3));
+		assert_eq!(store.distance(&3), Some(&7));
+		assert_eq!(store.distance(&4), Some(&6));
+		assert_eq!(store.distance(&5), None);
 	}
 }
