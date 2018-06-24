@@ -1,3 +1,3 @@
-pub use self::kruskals::kruskals;
+pub use self::kruskals::Kruskals;
 
 mod kruskals;
