@@ -17,6 +17,7 @@ Rust library for data structures [WIP]
 - Sparse table
 	- Index sparse table
 	- Fully associative sparse table
+- Disjoint set
 	
 ## Algorithms
 - Graph
