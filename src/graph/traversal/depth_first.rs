@@ -44,16 +44,16 @@ mod tests {
 
 	#[test]
 	fn test() {
+		use graph::HalfEdge;
 		use graph::MutableGraph;
-		use graph::WeightlessEdge;
 
 		let mut graph = ::graph::AdjacencyList::new();
-		graph.add_edge(1, WeightlessEdge::new(2));
-		graph.add_edge(1, WeightlessEdge::new(5));
-		graph.add_edge(2, WeightlessEdge::new(3));
-		graph.add_edge(2, WeightlessEdge::new(4));
-		graph.add_edge(5, WeightlessEdge::new(6));
-		graph.add_edge(5, WeightlessEdge::new(7));
+		graph.add_edge(1, HalfEdge::new_weightless(2));
+		graph.add_edge(1, HalfEdge::new_weightless(5));
+		graph.add_edge(2, HalfEdge::new_weightless(3));
+		graph.add_edge(2, HalfEdge::new_weightless(4));
+		graph.add_edge(5, HalfEdge::new_weightless(6));
+		graph.add_edge(5, HalfEdge::new_weightless(7));
 		let traversal = DepthFirst::new(&graph, &1);
 		let traversal: Vec<u32> = traversal.cloned().collect();
 		assert_eq!(&traversal, &[1, 5, 7, 6, 2, 4, 3]);

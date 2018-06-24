@@ -44,22 +44,22 @@ mod tests {
 
 	#[test]
 	fn test() {
-		use graph::WeightlessEdge;
+		use graph::HalfEdge;
 		use graph::MutableGraph;
 		use Vec;
 
 		let graph = ::graph::AdjacencyList::new();
 		let mut graph = ::graph::UndirectedGraph::new(graph);
-		graph.add_edge('a', WeightlessEdge::new('b'));
-		graph.add_edge('a', WeightlessEdge::new('d'));
-		graph.add_edge('a', WeightlessEdge::new('e'));
-		graph.add_edge('b', WeightlessEdge::new('c'));
-		graph.add_edge('b', WeightlessEdge::new('e'));
-		graph.add_edge('c', WeightlessEdge::new('f'));
-		graph.add_edge('d', WeightlessEdge::new('g'));
-		graph.add_edge('e', WeightlessEdge::new('g'));
-		graph.add_edge('g', WeightlessEdge::new('h'));
-		graph.add_edge('g', WeightlessEdge::new('i'));
+		graph.add_edge('a', HalfEdge::new_weightless('b'));
+		graph.add_edge('a', HalfEdge::new_weightless('d'));
+		graph.add_edge('a', HalfEdge::new_weightless('e'));
+		graph.add_edge('b', HalfEdge::new_weightless('c'));
+		graph.add_edge('b', HalfEdge::new_weightless('e'));
+		graph.add_edge('c', HalfEdge::new_weightless('f'));
+		graph.add_edge('d', HalfEdge::new_weightless('g'));
+		graph.add_edge('e', HalfEdge::new_weightless('g'));
+		graph.add_edge('g', HalfEdge::new_weightless('h'));
+		graph.add_edge('g', HalfEdge::new_weightless('i'));
 		let traversal = BreadthFirst::new(&graph, &'a');
 		let traversal: Vec<char> = traversal.cloned().collect();
 		assert_eq!(&traversal, &['a', 'b', 'd', 'e', 'c', 'g', 'f', 'h', 'i']);

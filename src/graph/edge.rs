@@ -11,7 +11,15 @@ pub trait WeightedEdge: Edge {
 }
 
 pub trait ReversibleEdge: Edge {
-	fn reverse(&self, start: &Self::Node) -> (Self::Node, Self);
+	fn reverse_with(&self, start: &Self::Node) -> (Self::Node, Self);
+}
+
+pub trait CompleteEdge: Edge {
+	fn start_node(&self) -> &Self::Node;
+
+	fn reverse(&self) -> (Self::Node, Self) where Self: Sized + ReversibleEdge {
+		ReversibleEdge::reverse_with(self, self.start_node())
+	}
 }
 
 pub trait Weight {

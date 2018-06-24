@@ -81,4 +81,17 @@ mod tests {
 		assert!(set.connected(&0, &2));
 		assert!(!set.connected(&0, &3));
 	}
+
+	#[test]
+	fn test_reference() {
+		let mut set = DisjointSet::new();
+		set.make_set(&0);
+		set.make_set(&1);
+		set.make_set(&2);
+		set.make_set(&3);
+		set.union(&&0, &&1);
+		set.union(&&1, &&2);
+		assert!(set.connected(&&0, &&2));
+		assert!(!set.connected(&&0, &&3));
+	}
 }

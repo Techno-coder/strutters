@@ -118,15 +118,15 @@ mod tests {
 	#[test]
 	fn test() {
 		use graph::MutableGraph;
-		use graph::GenericEdge;
+		use graph::HalfEdge;
 
 		let mut graph = ::graph::AdjacencyList::new();
-		graph.add_edge(1, GenericEdge::new(4, 3));
-		graph.add_edge(2, GenericEdge::new(1, 3));
-		graph.add_edge(3, GenericEdge::new(4, 2));
-		graph.add_edge(4, GenericEdge::new(2, 1));
-		graph.add_edge(4, GenericEdge::new(3, 1));
-		graph.add_edge(5, GenericEdge::new(4, 2));
+		graph.add_edge(1, HalfEdge::new(4, 3));
+		graph.add_edge(2, HalfEdge::new(1, 3));
+		graph.add_edge(3, HalfEdge::new(4, 2));
+		graph.add_edge(4, HalfEdge::new(2, 1));
+		graph.add_edge(4, HalfEdge::new(3, 1));
+		graph.add_edge(5, HalfEdge::new(4, 2));
 
 		let floyd = Floyd::compute(&graph, Some(&0));
 		assert_eq!(floyd.has_negative_cycle(), false);

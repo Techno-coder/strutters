@@ -113,13 +113,13 @@ mod tests {
 	#[test]
 	fn test() {
 		use graph::MutableGraph;
-		use graph::GenericEdge;
+		use graph::HalfEdge;
 
 		let mut graph = ::graph::AdjacencyList::new();
-		graph.add_edge('a', GenericEdge::new('b', 1));
-		graph.add_edge('b', GenericEdge::new('c', 1));
-		graph.add_edge('b', GenericEdge::new('d', 3));
-		graph.add_edge('a', GenericEdge::new('c', 5));
+		graph.add_edge('a', HalfEdge::new('b', 1));
+		graph.add_edge('b', HalfEdge::new('c', 1));
+		graph.add_edge('b', HalfEdge::new('d', 3));
+		graph.add_edge('a', HalfEdge::new('c', 5));
 
 		let store = Dijkstra::compute(&graph, &'a', 0);
 		assert_eq!(store.distance(&'a'), Some(&0));

@@ -27,6 +27,8 @@ Rust library for data structures [WIP]
 	- Traversal
 		- Breadth first
 		- Depth first
+	- Minimum spanning tree
+		- Kruskal's algorithm
 - Math
 	- Greatest common divisor
 
